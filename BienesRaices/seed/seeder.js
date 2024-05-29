@@ -2,7 +2,8 @@ import { exit } from 'node:process';
 import db from '../config/db.js';
 import categorias from "./categorias.js";
 import precios from "./precios.js";
-import { Categoria, Precio } from "../models/index.js";
+import {Categoria, Precio, Propiedad, Usuario} from "../models/index.js";
+import usuarios from "./usuarios.js";
 
 const importarDatos = async () => {
     try {
@@ -15,7 +16,8 @@ const importarDatos = async () => {
         // Insertar los datos
         await Promise.all([
             Categoria.bulkCreate(categorias),
-            Precio.bulkCreate(precios)
+            Precio.bulkCreate(precios),
+            Usuario.bulkCreate(usuarios)
         ]);
 
         console.log('Datos insertados correctamente');
@@ -30,6 +32,7 @@ const importarDatos = async () => {
 const eliminarDatos = async () => {
     try {
         await Promise.all([
+            Propiedad.destroy({where : {}, truncate : true}),
             Categoria.destroy({where: {}, truncate: true}),
             Precio.destroy({where: {}, truncate: true})
         ]);

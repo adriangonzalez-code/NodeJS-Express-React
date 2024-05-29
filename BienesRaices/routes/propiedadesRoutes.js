@@ -1,11 +1,13 @@
 import express from 'express';
 const router = express.Router();
-import { admin, crear, guardar } from "../controllers/propiedadController.js";
+import { admin, crear, guardar, agregarImagen, almacenarImagen } from "../controllers/propiedadController.js";
 import { body } from "express-validator";
+import protegerRuta from "../middlewares/protegerRuta.js";
+import upload from "../middlewares/subirImagen.js";
 
-router.get('/mis-propiedades', admin);
-router.get('/propiedades/crear', crear);
-router.post('/propiedades/crear',
+router.get('/mis-propiedades', protegerRuta, admin);
+router.get('/propiedades/crear', protegerRuta, crear);
+router.post('/propiedades/crear',protegerRuta,
     body('titulo').notEmpty().withMessage('El titulo del anuncio es obligatorio'),
     body('descripcion')
         .notEmpty().withMessage('La descripción no puede ser vacía')
@@ -17,5 +19,9 @@ router.post('/propiedades/crear',
     body('wc').notEmpty().withMessage('Seleccione la cantidad de baños'),
     body('lat').notEmpty().withMessage('Ubica la propiedad en el mapa'),
     guardar);
+
+router.get('/propiedades/agregar-imagen/:id', protegerRuta, agregarImagen);
+
+router.post('/propiedades/agregar-imagen/:id', protegerRuta, upload.single('imagen'), almacenarImagen);
 
 export default router;
