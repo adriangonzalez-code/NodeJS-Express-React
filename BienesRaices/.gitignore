@@ -143,3 +143,5 @@ dist
 # .idea/workspace.xml
 # .idea/tasks.xml
 # .idea/dictionaries
+
+public/uploads/**
