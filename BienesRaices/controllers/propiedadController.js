@@ -4,23 +4,54 @@ import { unlink } from 'node:fs/promises';
 
 const admin = async (req, res) => {
 
-    const { id } = req.usuario;
+    // Leer QueryString
+    const { pagina: paginaActual } = req.query;
 
-    const propiedades = await Propiedad.findAll({
-        where: {
-            usuario_id: id
-        },
-        include: [
-            { model: Categoria, as: "categoria" },
-            { model: Precio, as: "precio" }
-        ]
-    });
+    const expresion = /^[1-9]$/;
 
-    res.render('propiedades/admin', {
-        pagina: 'Mis Propiedades',
-        propiedades,
-        csrfToken: req.csrfToken(),
-    });
+    if (!expresion.test(paginaActual)) {
+        return res.redirect('/mis-propiedades?pagina=1');
+    }
+
+    try {
+        const { id } = req.usuario;
+
+        // Limites y Offset para el paginador
+        const limit = 3;
+        const offset = ((paginaActual * limit) - limit);
+
+        const [propiedades, total] = await Promise.all([
+            await Propiedad.findAll({
+                limit,
+                offset,
+                where: {
+                    usuario_id: id
+                },
+                include: [
+                    {model: Categoria, as: "categoria"},
+                    {model: Precio, as: "precio"}
+                ]
+            }),
+            Propiedad.count({
+                where: {
+                    usuario_id: id
+                }
+            })]
+        );
+
+        res.render('propiedades/admin', {
+            pagina: 'Mis Propiedades',
+            propiedades,
+            csrfToken: req.csrfToken(),
+            paginas: Math.ceil(total / limit),
+            paginaActual: Number(paginaActual),
+            total,
+            offset,
+            limit
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 // Formulario para crear una nueva propiedad
@@ -62,8 +93,19 @@ const guardar = async (req, res) => {
     }
 
     // Crear Registro
-    const { titulo, descripcion, habitaciones, estacionamiento, wc, lat, lng, categoria: categoria_id, precio : precio_id, calle } = req.body;
-    const { id : usuario_id } = req.usuario;
+    const {
+        titulo,
+        descripcion,
+        habitaciones,
+        estacionamiento,
+        wc,
+        lat,
+        lng,
+        categoria: categoria_id,
+        precio: precio_id,
+        calle
+    } = req.body;
+    const {id: usuario_id} = req.usuario;
 
     try {
         const propiedadGuardada = await Propiedad.create({
@@ -78,10 +120,10 @@ const guardar = async (req, res) => {
             precio_id,
             categoria_id,
             usuario_id,
-            imagen : '',
+            imagen: '',
         });
 
-        const { id } = propiedadGuardada;
+        const {id} = propiedadGuardada;
 
         res.redirect(`/propiedades/agregar-imagen/${id}`);
     } catch (error) {
@@ -91,7 +133,7 @@ const guardar = async (req, res) => {
 
 const agregarImagen = async (req, res) => {
 
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Validar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id);
@@ -119,7 +161,7 @@ const agregarImagen = async (req, res) => {
 };
 
 const almacenarImagen = async (req, res, next) => {
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Validar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id);
@@ -154,7 +196,7 @@ const almacenarImagen = async (req, res, next) => {
 };
 
 const editar = async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Validar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id);
@@ -206,7 +248,7 @@ const guardarCambios = async (req, res) => {
         });
     }
 
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Validar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id);
@@ -222,7 +264,18 @@ const guardarCambios = async (req, res) => {
 
     // Reescribir el objeto
     try {
-        const { titulo, descripcion, habitaciones, estacionamiento, wc, lat, lng, categoria: categoria_id, precio : precio_id, calle } = req.body;
+        const {
+            titulo,
+            descripcion,
+            habitaciones,
+            estacionamiento,
+            wc,
+            lat,
+            lng,
+            categoria: categoria_id,
+            precio: precio_id,
+            calle
+        } = req.body;
 
         propiedad.set({
             titulo,
@@ -246,7 +299,7 @@ const guardarCambios = async (req, res) => {
 };
 
 const eliminar = async (req, res) => {
-    const { id } = req.params;
+    const {id} = req.params;
 
     // Validar que la propiedad exista
     const propiedad = await Propiedad.findByPk(id);
@@ -269,6 +322,29 @@ const eliminar = async (req, res) => {
     res.redirect('/mis-propiedades');
 };
 
+// Muestra una propiedad
+const mostrarPropiedad = async (req, res) => {
+
+    const {id} = req.params;
+
+    // Comprobar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id, {
+        include: [
+            {model: Precio, as: "precio"},
+            {model: Categoria, as: "categoria"}
+        ]
+    });
+
+    if (!propiedad) {
+        res.redirect('/404');
+    }
+
+    res.render('propiedades/mostrar', {
+        propiedad,
+        pagina: propiedad.titulo
+    });
+};
+
 export {
     admin,
     crear,
@@ -277,5 +353,6 @@ export {
     almacenarImagen,
     editar,
     guardarCambios,
-    eliminar
+    eliminar,
+    mostrarPropiedad
 }

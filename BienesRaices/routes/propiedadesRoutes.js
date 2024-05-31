@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar } from "../controllers/propiedadController.js";
+import { admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarCambios, eliminar, mostrarPropiedad } from "../controllers/propiedadController.js";
 import { body } from "express-validator";
 import protegerRuta from "../middlewares/protegerRuta.js";
 import upload from "../middlewares/subirImagen.js";
@@ -40,5 +40,8 @@ router.post('/propiedades/editar/:id',protegerRuta,
     guardarCambios);
 
 router.post('/propiedades/eliminar/:id', protegerRuta, eliminar);
+
+// Area Pública
+router.get('/propiedad/:id', mostrarPropiedad);
 
 export default router;
