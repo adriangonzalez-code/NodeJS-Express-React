@@ -42,6 +42,9 @@
     };
 
     const mostrarPropiedades = proiedades => {
+        // Limpiar los markers previos
+        markers.clearLayers();
+
         proiedades.forEach((propiedad) => {
             //Agregar pines
             const marker = new L.marker([propiedad?.lat, propiedad?.lng], {
@@ -61,12 +64,12 @@
     const filtrarPropiedades = () => {
         const resultado = propiedades.filter(filtrarCategoria).filter(filtrarPrecio);
 
-        console.log(resultado);
+        mostrarPropiedades(resultado);
     };
 
     const filtrarCategoria = propiedad => filtros.categoria ? propiedad.categoria_id === filtros.categoria : propiedad;
 
-    const filtrarPrecio = propiedades => filtros.precio ? propiedad.precio_id === filtros.precio : propiedad;
+    const filtrarPrecio = propiedad => filtros.precio ? propiedad.precio_id === filtros.precio : propiedad;
 
     obtenerPropiedasdes();
 })();
