@@ -4,6 +4,7 @@ import { admin, crear, guardar, agregarImagen, almacenarImagen, editar, guardarC
 import { body } from "express-validator";
 import protegerRuta from "../middlewares/protegerRuta.js";
 import upload from "../middlewares/subirImagen.js";
+import identificarsuario from "../middlewares/identificarsuario.js";
 
 router.get('/mis-propiedades', protegerRuta, admin);
 router.get('/propiedades/crear', protegerRuta, crear);
@@ -42,6 +43,6 @@ router.post('/propiedades/editar/:id',protegerRuta,
 router.post('/propiedades/eliminar/:id', protegerRuta, eliminar);
 
 // Area Pública
-router.get('/propiedad/:id', mostrarPropiedad);
+router.get('/propiedad/:id', identificarsuario, mostrarPropiedad);
 
 export default router;

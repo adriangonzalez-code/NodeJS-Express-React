@@ -7,12 +7,12 @@ const router = express.Router();
 router.get('/', inicio);
 
 // Página Categorias
-router.get('/categoria/:id', categoria);
+router.get('/categorias/:id', categoria);
 
 // Página 404
 router.get('/404', noEncontrado);
 
 // Buscador
-router.get('/buscador', buscador);
+router.post('/buscador', buscador);
 
 export default router;
