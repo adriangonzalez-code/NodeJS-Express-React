@@ -1,9 +1,8 @@
-import {check, validationResult} from "express-validator";
+import { check, validationResult } from "express-validator";
 import Usuario from "../models/Usuario.js";
-import {generarId, generarJWT} from "../helper/tokens.js";
-import {emailRegistro, emailOlvidePassword} from '../helper/emails.js'
+import { generarId, generarJWT } from "../helper/tokens.js";
+import { emailRegistro, emailOlvidePassword } from '../helper/emails.js'
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 const formularioLogin = (req, res) => {
     res.render('./auth/login', {
@@ -301,6 +300,10 @@ const nuevoPassword = async (req, res, next) => {
     });
 };
 
+const cerrarSesion = async (req, res) => {
+    return res.clearCookie('_token').status(200).redirect('/auth/login');
+};
+
 export {
     formularioLogin,
     formularioRegistro,
@@ -310,5 +313,6 @@ export {
     resetPassword,
     comprobarToken,
     nuevoPassword,
-    autenticar
+    autenticar,
+    cerrarSesion
 }
