@@ -30,7 +30,7 @@ try {
 }
 
 // Habilitar Pug
-app.set('view engine', 'pug');
+app.set('views engine', 'pug');
 app.set('views', './views');
 
 // Carpeta Pública
