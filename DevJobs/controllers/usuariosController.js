@@ -48,10 +48,16 @@ exports.crearUsuario = async (req, res, next) => {
     try {
         await usuario.save();
 
-        return res.redirect('/iniciar-sesion');
+        res.redirect('/iniciar-sesion');
     } catch (error) {
-        console.log(error);
         req.flash('error', error);
-        return res.redirect('/crear-cuenta');
+        res.redirect('/crear-cuenta');
     }
+};
+
+// Formulario para iniciar sesión
+exports.formIniciarSesion = async (req, res) => {
+    res.render('iniciar-sesion', {
+        nombrePagina: 'Ininiciar Sesión devJobs',
+    });
 };
