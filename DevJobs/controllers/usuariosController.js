@@ -1,4 +1,6 @@
 const Usuarios = require('../models/Usuarios');
+const multer = require("multer");
+const shortid = require('shortid');
 
 exports.formCrearCuenta = (req, res) => {
     return res.render('crear-cuenta', {
@@ -84,6 +86,10 @@ exports.editarPerfil = async (req, res) => {
         usuario.password = req.body.password;
     }
 
+    if (req.file) {
+        usuario.imagen = req.file.filename;
+    }
+
     await usuario.save();
 
     req.flash('correcto', 'cambios guardados correctamente');
@@ -121,3 +127,36 @@ exports.validarPerfil = (req, res, next) => {
 
     next(); // Todo bien, siguiente middleware!
 };
+
+exports.subirImagen = (req, res, next) => {
+    upload(req, res, function(error) {
+        if(error instanceof multer.MulterError){
+            return next();
+        }
+    });
+    next();
+};
+
+// Opciones de Multer
+const configuracionMulter = {
+    storage: fileStorage = multer.diskStorage({
+        destination : (req, file, cb) => {
+            cb(null, __dirname+'../../public/uploads/perfiles')
+        },
+        filename: (req, file, cb) => {
+            const extension = file.mimetype.split('/')[1];
+            cb(null, `${shortid.generate()}.${extension}`);
+        }
+    }),
+    fileFilter(req, file, cb){
+        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+
+            //El callback se ejecuta como true o false : true cuando la imagen se acepta
+            cb(null, true);
+        }else {
+            cb(null, false);
+        }
+    }
+}
+
+const upload = multer(configuracionMulter).single('imagen');
