@@ -42,5 +42,11 @@ module.exports = () => {
     router.get('/editar-perfil', authController.verificarUsuario, usuariosController.formEditarPerfil);
     router.post('/editar-perfil', authController.verificarUsuario, /*usuariosController.validarPerfil,*/ usuariosController.subirImagen, usuariosController.editarPerfil);
 
+    // Recibir mensajes de candidatos
+    router.post('/vacantes/:url', vacantesController.subirCV, vacantesController.contactar);
+
+    // Muestra los candidatos por vacantes
+    router.get('/candidatos/:id', authController.verificarUsuario, vacantesController.mostrarCandidatos);
+
     return router;
 };

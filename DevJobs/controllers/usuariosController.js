@@ -71,7 +71,8 @@ exports.formEditarPerfil = (req, res) => {
         nombrePagina: 'Edita tu perfil en devJobs',
         usuario: req.user,
         cerrarSesion: true,
-        nombre: req.user.nombre
+        nombre: req.user.nombre,
+        imagen: req.user.imagen
     });
 };
 
@@ -121,7 +122,8 @@ exports.validarPerfil = (req, res, next) => {
             usuario: req.user,
             cerrarSesion: true,
             nombre: req.user.nombre,
-            mensajes: req.flash()
+            mensajes: req.flash(),
+            imagen: req.user.imagen
         });
     }
 
@@ -130,15 +132,30 @@ exports.validarPerfil = (req, res, next) => {
 
 exports.subirImagen = (req, res, next) => {
     upload(req, res, function(error) {
-        if(error instanceof multer.MulterError){
-            return next();
+        if (error) {
+            if (error instanceof multer.MulterError) {
+
+                if (error.core === 'LIMIT_FILE_SIZE') {
+                    req.flash('error', 'El archivo es muy grande Máximo: 100kb');
+                } else {
+                    req.flash('error', error.message);
+                }
+
+                return next();
+            } else {
+                req.flash('error', error.message);
+            }
+
+            return res.redirect('/administracion');
         }
+
+        return next();
     });
-    next();
 };
 
 // Opciones de Multer
 const configuracionMulter = {
+    limits: { fileSize: 100000 },
     storage: fileStorage = multer.diskStorage({
         destination : (req, file, cb) => {
             cb(null, __dirname+'../../public/uploads/perfiles')
@@ -149,12 +166,12 @@ const configuracionMulter = {
         }
     }),
     fileFilter(req, file, cb){
-        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg'){
 
             //El callback se ejecuta como true o false : true cuando la imagen se acepta
             cb(null, true);
-        }else {
-            cb(null, false);
+        } else {
+            cb(new Error('Formato no válido'));
         }
     }
 }
