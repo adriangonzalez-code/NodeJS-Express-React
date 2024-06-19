@@ -56,5 +56,8 @@ module.exports = () => {
     // Muestra los candidatos por vacantes
     router.get('/candidatos/:id', authController.verificarUsuario, vacantesController.mostrarCandidatos);
 
+    // Buscador de vacantes
+    router.post('/buscador', vacantesController.buscarVacantes);
+
     return router;
 };

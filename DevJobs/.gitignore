@@ -144,6 +144,9 @@ dist
 # .idea/tasks.xml
 # .idea/dictionaries
 
-public/uploads/**
+public/uploads/cv/*
+public/uploads/perfiles/*
 
 variables.env
+
+.DS_Store
