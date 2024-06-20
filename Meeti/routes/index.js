@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = function () {
-    router.get('/', (req, res) => {
-        res.render('home');
-    });
+const homeController = require('../controllers/homeController');
+const usuariosController = require('../controllers/usuarioController');
 
-    router.get('/crear-cuenta', (req, res) => {
-        res.render('crear-cuenta');
-    });
+module.exports = function () {
+    router.get('/', homeController.home);
+
+    router.get('/crear-cuenta', usuariosController.formCresrCuenta);
+    router.post('/crear-cuenta', usuariosController.crearNuevaCuenta);
+
+    // Iniciar Sesión
+    router.get('/iniciar-sesion', usuariosController.formIniciarSesion);
 
     return router;
 }
