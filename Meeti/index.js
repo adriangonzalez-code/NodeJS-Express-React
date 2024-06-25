@@ -13,6 +13,8 @@ const passport = require('./config/passport');
 const db = require('./config/db');
 db.sync().then(() => console.log('Database Connected')).catch((err) => console.log(err));
 require('./models/Usuarios');
+require('./models/Categorias');
+require('./models/Grupos');
 
 // Variables de Desarrollo
 require('dotenv').config({path: 'variables.env'});
