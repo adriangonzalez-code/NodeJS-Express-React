@@ -10,7 +10,7 @@ exports.autenticarUsuario = passport.authenticate('local', {
 // Revisa si el usuario está autenticado o no
 exports.usuarioAutenticado = (req, res, next) => {
     // Si el usuario está autenticado, adelante
-    if (req.isAuthenticated) {
+    if (req.isAuthenticated()) {
         return next();
     }
 

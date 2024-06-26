@@ -23,66 +23,28 @@
                     <a href="" class="btn btn-rojo">Eliminar</a>
                 </div>
             </li>
-            <li>
-                <div class="informacion-admin">
-                    <p class="fecha">Miércoles, 24 de Mayo de 2019</p>
-                    <h3>Bitcoin y otras criptomnedas</h3>
-                    <small>23 asistentes</small>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="" class="btn btn-verde">Editar</a>
-                    <a href="" class="btn btn-azul2">Asistentes</a>
-                    <a href="" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
-            <li>
-                <div class="informacion-admin">
-                    <p class="fecha">Jueves, 26 de Mayo de 2019</p>
-                    <h3>Node México</h3>
-                    <small>230 asistentes</small>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="" class="btn btn-verde">Editar</a>
-                    <a href="" class="btn btn-azul2">Asistentes</a>
-                    <a href="" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
         </ul>
     </div>
 
     <div class="seccion-admin">
-        <h2>Tus Grupos</h2>
-        <ul>
-            <li>
-                <div class="informacion-admin">
-                    <h3>BlockChain Guadalajara</h3>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="" class="btn btn-verde">Editar</a>
-                    <a href="" class="btn btn-azul2">Imagen</a>
-                    <a href="" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
-            <li>
-                <div class="informacion-admin">
-                    <h3>GraphQL Guadalajara</h3>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="" class="btn btn-verde">Editar</a>
-                    <a href="" class="btn btn-azul2">Imagen</a>
-                    <a href="" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
-            <li>
-                <div class="informacion-admin">
-                    <h3>Node.js Guadalajara</h3>
-                </div>
-                <div class="acciones contenedor-botones">
-                    <a href="" class="btn btn-verde">Editar</a>
-                    <a href="" class="btn btn-azul2">Imagen</a>
-                    <a href="" class="btn btn-rojo">Eliminar</a>
-                </div>
-            </li>
-        </ul>
+        <% if (grupos.length) {%>
+            <h2>Tus Grupos</h2>
+            <ul>
+                <% grupos.forEach(grupo => { %>
+                    <li>
+                        <div class="informacion-admin">
+                            <h3><%= grupo.nombre %></h3>
+                        </div>
+                        <div class="acciones contenedor-botones">
+                            <a href="/editar-grupo/<%= grupo.id %>" class="btn btn-verde">Editar</a>
+                            <a href="/imagen-grupo/<%= grupo.id %>" class="btn btn-azul2">Imagen</a>
+                            <a href="/eliminar-grupo/<%= grupo.id %>" class="btn btn-rojo">Eliminar</a>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p>No tienes grupos creados</p>
+        <% } %>
     </div>
 </main>
