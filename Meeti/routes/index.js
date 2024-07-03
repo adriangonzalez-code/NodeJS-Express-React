@@ -41,6 +41,7 @@ module.exports = function () {
 
     // Nuevo Meeti
     router.get('/nuevo-meeti', authController.usuarioAutenticado, meetiController.formNuevoMeeti);
+    router.post('/nuevo-meeti', authController.usuarioAutenticado, meetiController.sanitizarMeeti, meetiController.crearMeeti);
 
     // Cerrar Sesion
     //router.get('/cerrar-sesion', authController.verificarUsuario, authController.cerrarSesion);

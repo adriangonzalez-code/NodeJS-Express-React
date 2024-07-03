@@ -15,6 +15,7 @@ db.sync().then(() => console.log('Database Connected')).catch((err) => console.l
 require('./models/Usuarios');
 require('./models/Categorias');
 require('./models/Grupos');
+require('./models/Meeti');
 
 // Variables de Desarrollo
 require('dotenv').config({path: 'variables.env'});
