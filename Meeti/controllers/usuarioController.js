@@ -76,3 +76,83 @@ exports.confirmarCuenta = async(req, res, next) => {
     req.flash('exito', 'La cuenta se ha confirmado, ya puedes iniciar sesión');
     res.redirect('/iniciar-sesion');
 };
+
+// Muestra el formulario para editar el perfil
+exports.formEditarPerfil = async (req, res) => {
+    const usuario = await Usuarios.findByPk(req.user.id);
+
+    res.render('editar-perfil', {
+        nombrePagina: 'Editar Perfil',
+        usuario
+    });
+};
+
+// Almacena en la base de datos los cambios del perfil
+exports.editarPerfil = async (req, res) => {
+    const usuario = await Usuarios.findByPk(req.user.id);
+
+    // Sanitizar datos
+    req.sanitizeBody('nombre');
+    req.sanitizeBody('descripcion');
+    req.sanitizeBody('email');
+
+    // Leer datos del formulario
+    const { nombre, descripcion, email } = req.body;
+
+    // Asignar valores a los campos
+    usuario.nombre = nombre;
+    usuario.descripcion = descripcion;
+    usuario.email = email;
+
+    // guardar los cambios en la base de datos
+    await usuario.save();
+
+    req.flash('exito', 'Cambios guardados correctamente');
+    res.redirect('/administracion');
+};
+
+// Muestra el formulario para modificar el password
+exports.formCambiarPassword = (req, res) => {
+    res.render('cambiar-password', {
+        nombrePagina: 'Cambiar Password'
+    });
+};
+
+// Revisa si el password anterior es correcto y lo modifica por uno nuevo
+exports.cambiarPassword = async (req, res, next) => {
+    // Verificar que el usuario existe
+    const usuario = await Usuarios.findByPk(req.user.id);
+
+    // Si no existe, redireccionar
+    if (!usuario) {
+        req.flash('error', 'No existe esa cuenta');
+        res.redirect('/crear-cuenta');
+        return next();
+    }
+
+    // Verificar que el password anterior es correcto
+    if (!usuario.validarPassword(req.body.anterior)) {
+        req.flash('error', 'El password anterior no es correcto');
+        res.redirect('/administracion');
+        return next();
+    }
+
+    // Si el password anterior es correcto, hashear el nuevo
+    const hash = usuario.hashPassword(req.body.nuevo);
+
+    // Asignar el password al usuario
+    usuario.password = hash;
+
+    // Guardar en la BD
+    await usuario.save();
+
+    // Redireccionar
+    req.logout(req.user, (err) => {
+        if (err) return next(err);
+        req.flash(
+            "exito",
+            "Password Modificado Correctamente, vuelve a iniciar sesión"
+        );
+        res.redirect("/iniciar-sesion");
+    });
+};
