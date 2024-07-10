@@ -8,8 +8,17 @@ const adminController = require('../controllers/adminController');
 const gruposController = require('../controllers/gruposController');
 const meetiController = require('../controllers/meetiController');
 
+const meetiControllerFE = require('../controllers/frontend/meetiControllerFE');
+
 module.exports = function () {
+
+    // AREA PÚBLICA
     router.get('/', homeController.home);
+
+    // Muestra un Meeti
+    router.get('/meeti/:slug', meetiControllerFE.mostrarMeeti);
+
+
 
     // Crear y confirmar cuenta
     router.get('/crear-cuenta', usuariosController.formCresrCuenta);
@@ -19,6 +28,9 @@ module.exports = function () {
     // Iniciar Sesión
     router.get('/iniciar-sesion', usuariosController.formIniciarSesion);
     router.post('/iniciar-sesion', authController.autenticarUsuario);
+    router.get('/cerrar-sesion', authController.usuarioAutenticado, authController.cerrarSesion);
+
+    // AREA PRIVADA
 
     // Panel de administración
     router.get('/administracion', authController.usuarioAutenticado, adminController.panelAdministracion);
@@ -59,8 +71,9 @@ module.exports = function () {
     router.get('/cambiar-password', authController.usuarioAutenticado, usuariosController.formCambiarPassword);
     router.post('/cambiar-password', authController.usuarioAutenticado, usuariosController.cambiarPassword);
 
-    // Cerrar Sesion
-    //router.get('/cerrar-sesion', authController.verificarUsuario, authController.cerrarSesion);
+    // Imagenes de Perfil
+    router.get('/imagen-perfil', authController.usuarioAutenticado, usuariosController.formSubirImagenPerfil);
+    router.post('/imagen-perfil', authController.usuarioAutenticado, usuariosController.subirImagen, usuariosController.guardarImagenPerfil);
 
     return router;
 }

@@ -1,6 +1,57 @@
 const Usuarios = require('../models/Usuarios');
 const enviarEmail = require('../handlers/emails');
 
+const multer = require('multer');
+const shortid = require('shortid');
+const fs = require('fs');
+
+configuracionMulter = {
+    limits: {
+        fileSize: 1000000
+    },
+    storage: fileStorage = multer.diskStorage({
+        destination: (req, res, next) => {
+            next(null, __dirname + '/../public/uploads/perfiles/');
+        },
+        filename: (req, file, next) => {
+            const extension = file.mimetype.split('/')[1];
+            next(null, `${shortid.generate()}.${extension}`);
+        }
+    }),
+    fileFilter(req, file, next) {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            // El formato es válido
+            next(null, true);
+        } else {
+            // El formato no es válido
+            next(new Error('Formato no válido'), false);
+        }
+    }
+}
+
+const upload = multer(configuracionMulter).single('imagen');
+
+// Sube imagen en el servidor
+exports.subirImagen = (req, res, next) => {
+    upload(req, res, function (error) {
+        if (error) {
+            if (error instanceof multer.MulterError) {
+                if (error.code === 'LIMIT_FILE_SIZE') {
+                    req.flash('error', 'El archivo es muy grande');
+                } else {
+                    req.flash('error', error.message);
+                }
+            } else if (error.hasOwnProperty('message')) {
+                req.flash('error', error.message);
+            }
+            res.redirect('back');
+            return;
+        } else {
+            next();
+        }
+    });
+};
+
 exports.formCresrCuenta = (req, res) => {
     res.render('crear-cuenta', {
         nombrePagina: 'Crea tu Cuenta'
@@ -155,4 +206,45 @@ exports.cambiarPassword = async (req, res, next) => {
         );
         res.redirect("/iniciar-sesion");
     });
+};
+
+// Muestra el formulario para subir una imagen de perfil
+exports.formSubirImagenPerfil = async (req, res) => {
+    const usuario = await Usuarios.findByPk(req.user.id);
+
+    // Mostrar la vista
+    res.render('imagen-perfil', {
+        nombrePagina: 'Subir Imagen de Perfil',
+        usuario
+    });
+};
+
+// Guarda la imagen nueva, elimina la anterior (si aplica) y guarda el registro en la BD
+exports.guardarImagenPerfil = async (req, res) => {
+    const usuario = await Usuarios.findByPk(req.user.id);
+
+    // Si hay imagen anterior, eliminarla
+    if (req.file && usuario.imagen) {
+        const imagenAnteriorPath = __dirname + `/../public/uploads/perfiles/${usuario.imagen}`;
+
+        // Eliminar archivo con filesystem
+        fs.unlink(imagenAnteriorPath, (error) => {
+            if (error) {
+                console.log(error);
+            }
+
+            return;
+        });
+    }
+
+    // Almacenar la nueva imagen
+    if (req.file) {
+        usuario.imagen = req.file.filename;
+    }
+
+    // Almacenar en la Base de Datos y redireccionar
+    await usuario.save();
+
+    req.flash('exito', 'Se ha editado la imagen del usuario correctamente');
+    res.redirect('/administracion');
 };

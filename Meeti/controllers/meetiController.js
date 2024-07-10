@@ -1,5 +1,6 @@
 const Grupos = require('../models/grupos');
 const Meeti = require('../models/meeti');
+const uuid = require('uuid').v4;
 
 // Muestra formulario para nuevos Meeti
 exports.formNuevoMeeti = async (req, res) => {
@@ -30,6 +31,8 @@ exports.crearMeeti = async (req, res) => {
     if (req.body.cupo === '') {
         meeti.cupo = 0;
     }
+
+    meeti.id = uuid();
 
     // Almacena el Meeti en la BD
     try {

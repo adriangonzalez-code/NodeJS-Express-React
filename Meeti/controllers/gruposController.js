@@ -3,6 +3,7 @@ const Grupos = require('../models/Grupos');
 const multer = require('multer');
 const shortid = require('shortid');
 const fs = require('fs');
+const uuid = require('uuid').v4;
 
 configuracionMulter = {
     limits: {
@@ -76,6 +77,8 @@ exports.crearGrupo = async (req, res) => {
     if (req.file) {
         grupo.imagen = req.file.filename;
     }
+
+    grupo.id = uuid();
 
     try {
         // Almacenar en la BD
