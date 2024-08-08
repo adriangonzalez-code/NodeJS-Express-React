@@ -18,7 +18,11 @@ module.exports = function () {
     // Muestra un Meeti
     router.get('/meeti/:slug', meetiControllerFE.mostrarMeeti);
 
+    // Confirma la asistencia a un Meeti
+    router.post('/confirmar-asistencia/:slug', meetiControllerFE.confirmarAsistencia);
 
+    // Muestra assistentes al meeti
+    router.get('/asistentes/:slug', meetiControllerFE.mostrarAsistentes);
 
     // Crear y confirmar cuenta
     router.get('/crear-cuenta', usuariosController.formCresrCuenta);
