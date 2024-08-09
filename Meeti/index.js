@@ -14,6 +14,7 @@ const db = require('./config/db');
 db.sync().then(() => console.log('Database Connected')).catch((err) => console.log(err));
 require('./models/Usuarios');
 require('./models/Categorias');
+require('./models/Comentarios');
 require('./models/Grupos');
 require('./models/Meeti');
 
