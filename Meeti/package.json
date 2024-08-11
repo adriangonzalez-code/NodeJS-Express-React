@@ -4,7 +4,8 @@
   "description": "Meeti con Node, PostgreSQL y EJS",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"npm run dev\" \"npm run watch\"",
+    "desarrollo": "concurrently \"npm run dev\" \"npm run watch\"",
+    "start": "node ./index.js",
     "watch": "webpack --mode development --watch",
     "dev": "nodemon ./index.js"
   },

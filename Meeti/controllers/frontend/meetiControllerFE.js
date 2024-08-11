@@ -5,6 +5,7 @@ const Caterorias = require('../../models/Categorias');
 const Comentarios = require('../../models/Comentarios');
 const moment = require('moment');
 const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 exports.mostrarMeeti = async (req, res) => {
     const meeti = await Meeti.findOne({ where: { slug: req.params.slug }, include: [{ model: Grupos}, { model: Usuarios, attributes: ['id', 'nombre', 'imagen']}] });
@@ -14,14 +15,31 @@ exports.mostrarMeeti = async (req, res) => {
         res.redirect('/');
     }
 
+    // Consultar por meetis cercanos
+
+    const ubicacion = Sequelize.literal(`ST_GeomFromText('POINT(${meeti.ubicacion.coordinates[0]} ${meeti.ubicacion.coordinates[1]})')`);
+
+    // ST_DISTANCE_Sphere = Retorna una linea en metros
+    const distancia = Sequelize.fn('ST_DistanceSphere', Sequelize.col('ubicacion'), ubicacion);
+
     // Consultar después de verificar que exista el meeti
     const comentarios = await Comentarios.findAll({ where: { meetiId: meeti.id }, include: [{ model: Usuarios, attributes: ['id', 'nombre', 'imagen'] }] });
+
+    // Encontrar meetis cercanos
+    const cercanos = await Meeti.findAll({
+        order: distancia, // Los ordena del mas cercano al lejano
+        where: Sequelize.where(distancia, { [Op.lte]: 2000  }), // 2000 metros o 2km
+        limit: 3, // Máximo 3
+        offset: 1,
+        include: [{ model: Grupos }, { model: Usuarios, attributes: ['id', 'nombre', 'imagen'] }]
+    });
 
     // Mostrar la vista
     res.render('mostrar-meeti', {
         nombrePagina: meeti.titulo,
         meeti,
         moment,
+        cercanos,
         comentarios
     });
 };
