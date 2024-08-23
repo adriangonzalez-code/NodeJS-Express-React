@@ -144,4 +144,4 @@ dist
 # .idea/tasks.xml
 # .idea/dictionaries
 
-public/uploads/**
+/uploads/**
