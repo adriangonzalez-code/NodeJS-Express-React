@@ -26,5 +26,8 @@ app.use(cors());
 // Rutas de la app
 app.use('/', routes());
 
+// carpeta publica
+app.use(express.static('uploads'));
+
 // puerto
 app.listen(5000);
