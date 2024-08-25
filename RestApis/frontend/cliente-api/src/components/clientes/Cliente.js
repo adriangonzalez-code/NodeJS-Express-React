@@ -46,6 +46,11 @@ function Cliente({ cliente } ) {
                 <Link to={`/clientes/editar/${_id}`} className="btn btn-azul">
                     Editar Cliente
                 </Link>
+
+                <Link to={`/pedidos/nuevo/${_id}`} className="btn btn-amarillo">
+                    Nuevo Pedido
+                </Link>
+
                 <button type="button" className="btn btn-rojo btn-eliminar" onClick={ () => eliminarCliente(_id) }>
                     Eliminar Cliente
                 </button>

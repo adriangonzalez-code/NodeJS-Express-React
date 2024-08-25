@@ -34,13 +34,16 @@ module.exports = function () {
     // Actualizar Producto
     router.put('/productos/:idProducto', productosController.subirArchivo, productosController.actualizarProducto);
 
+    // Busqueda de productos
+    router.post('/productos/busqueda/:query', productosController.buscarProducto);
+
     // Eliminar Producto
     router.delete('/productos/:idProducto', productosController.eliminarProducto);
 
     /* PEDIDOS */
 
     // Agrega pedidos
-    router.post('/pedidos', pedidosController.nuevoPedido);
+    router.post('/pedidos/nuevo/:idUsuario', pedidosController.nuevoPedido);
 
     // Mostrar todos los pedidos
     router.get('/pedidos', pedidosController.mostrarPedidos);
