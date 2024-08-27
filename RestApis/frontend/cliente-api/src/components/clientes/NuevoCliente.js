@@ -1,9 +1,13 @@
-import React, { Fragment, useState } from 'react';
+import React, {Fragment, useContext, useState} from 'react';
 import Swal from "sweetalert2";
 import { withRouter } from'react-router-dom';
 import clienteAxios from '../../config/axios';
+import {CRMContext} from "../../context/CRMContext";
 
 function NuevoCliente({ history }) {
+
+    // utilizar valores del context
+    const [auth, guardarAuth] = useContext(CRMContext);
 
     // cliente = state, guardarCliente = función para guardar el state
     const [cliente, guardarCliente] = useState({
@@ -39,8 +43,12 @@ function NuevoCliente({ history }) {
         e.preventDefault();
 
         // enviar los datos al API
-        clienteAxios.post('/clientes', cliente)
-           .then(res => {
+        clienteAxios.post('/clientes', cliente, {
+            headers: {
+                'Authorization': `Bearer ${auth.token}`
+            }
+        })
+            .then(res => {
 
                if (res.data.code === 11000) {
                    console.log('Error de duplicado de Mongo');
@@ -53,7 +61,18 @@ function NuevoCliente({ history }) {
                // Redireccionar
                history.push('/');
             })
-           .catch(error => console.error(error));
+           .catch(error => {
+               console.error(error);
+
+               if (error.response.status === 500) {
+                   history.push('/iniciar-sesion');
+               }
+           });
+    }
+
+    // Verificar si el usuario está autenticado o no
+    if (!auth.auth && (localStorage.getItem('token') !== auth.token)) {
+        history.push('/iniciar-sesion');
     }
 
     return(

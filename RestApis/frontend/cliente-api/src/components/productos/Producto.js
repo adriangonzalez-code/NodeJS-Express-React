@@ -1,7 +1,8 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import clienteAxios from '../../config/axios';
+import { CRMContext } from "../../context/CRMContext";
 
 function Producto({ producto }) {
 
