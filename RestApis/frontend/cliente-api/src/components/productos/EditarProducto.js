@@ -108,7 +108,7 @@ function EditarProducto(props) {
 
                 <div className="campo">
                     <label>Imagen:</label>
-                    { imagen ? (<img src={`http://localhost:5000/${imagen}`} alt="imagen" width="300"/>) : null }
+                    { imagen ? (<img src={`${process.env.REACT_APP_BACKND_URL}/${imagen}`} alt="imagen" width="300"/>) : null }
                     <input onChange={leerArchivo} type="file" name="imagen"/>
                 </div>
 
