@@ -45,7 +45,11 @@ function Login(props) {
             // Redireccionar
             props.history.push('/');
         } catch (error) {
-            Swal.fire('Error', error.response.data.mensaje, 'error');
+            if (error.response) {
+                Swal.fire('Error', error.response.data.mensaje, 'error');
+            } else {
+                Swal.fire('Error', 'Hubo un error', 'error');
+            }
         }
     };
 

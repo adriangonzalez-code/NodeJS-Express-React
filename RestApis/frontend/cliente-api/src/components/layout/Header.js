@@ -15,7 +15,7 @@ const Header = (props) => {
         localStorage.setItem('token', '');
 
         // redireccionar
-        props.history.push('/inic');
+        props.history.push('/');
     }
 
     return (

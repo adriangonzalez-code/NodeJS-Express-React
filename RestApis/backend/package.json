@@ -4,7 +4,8 @@
   "description": "Aprendiendo a crear REST APIs",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js"
+    "dev": "nodemon ./index.js",
+    "start": "node ./index.js"
   },
   "author": "Adrian",
   "license": "ISC",
@@ -18,6 +19,7 @@
     "shortid": "^2.2.16"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "nodemon": "^3.1.4"
   }
 }
